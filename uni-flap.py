@@ -229,14 +229,14 @@ class PipePair(pygame.sprite.Sprite):
         """
         self.x -= ANIMATION_SPEED * frames_to_msec(delta_frames)
 
-    def collides_with(self, Unicorn):
+    def collides_with(self, unicorn):
         """Get whether the unicorn collides with a pipe in this PipePair.
 
         Arguments:
         unicorn: The unicorn which should be tested for collision with this
             PipePair.
         """
-        return pygame.sprite.collide_mask(self, Unicorn)
+        return pygame.sprite.collide_mask(self, unicorn)
 
 
 def load_images():
@@ -342,7 +342,7 @@ def main():
                 paused = not paused
             elif e.type == MOUSEBUTTONUP or (e.type == KEYUP and
                     e.key in (K_UP, K_RETURN, K_SPACE)):
-                Unicorn.msec_to_climb = Unicorn.CLIMB_DURATION
+                unicorn.msec_to_climb = Unicorn.CLIMB_DURATION
 
         if paused:
             continue  # don't draw anything

@@ -275,9 +275,9 @@ def load_images():
             'pipe-body': load_image('pipe_body.png'),
             # images for animating the flapping unicorn -- animated GIFs are
             # not supported in pygame
-            'uni-1-wingup': load_image('uni-1.jpeg'),
-            'uni-1-wingdown': load_image('uni-1.jpeg')}
-            # need to create a gif of unicorn!
+            'uni-1-starsup': load_image('uni-up.png'),
+            'uni-1-starsdown': load_image('uni-down.png')}
+            # need to create a gif of unicorn and replace those pipes to clouds!
 
 def frames_to_msec(frames, fps=FPS):
     """Convert frames to milliseconds at the specified framerate.
@@ -318,7 +318,7 @@ def main():
     # the unicorn stays in the same x position, so unicorn.x is a constant
     # center unicorn on screen
     unicorn = Unicorn(50, int(WIN_HEIGHT/2 - Unicorn.HEIGHT/2), 2,
-                (images['uni-1-wingup'], images['uni-1-wingdown']))
+                (images['uni-1-starsup'], images['uni-1-starsdown']))
 
     pipes = deque()
 
@@ -348,8 +348,8 @@ def main():
             continue  # don't draw anything
 
         # check for collisions
-        pipe_collision = any(p.collides_with(Unicorn) for p in pipes)
-        if pipe_collision or 0 >= Unicorn.y or Unicorn.y >= WIN_HEIGHT - Unicorn.HEIGHT:
+        pipe_collision = any(p.collides_with(unicorn) for p in pipes)
+        if pipe_collision or 0 >= unicorn.y or unicorn.y >= WIN_HEIGHT - Unicorn.HEIGHT:
             done = True
 
         for x in (0, WIN_WIDTH / 2):
@@ -362,12 +362,12 @@ def main():
             p.update()
             display_surface.blit(p.image, p.rect)
 
-        Unicorn.update()
-        display_surface.blit(Unicorn.image, Unicorn.rect)
+        unicorn.update()
+        display_surface.blit(unicorn.image, unicorn.rect)
 
         # update and display score
         for p in pipes:
-            if p.x + PipePair.WIDTH < Unicorn.x and not p.score_counted:
+            if p.x + PipePair.WIDTH < unicorn.x and not p.score_counted:
                 score += 1
                 p.score_counted = True
 

@@ -13,29 +13,29 @@ WIN_WIDTH = 284 * 2     # BG image size: 284x512 px; tiled twice
 WIN_HEIGHT = 512
 
 
-class Unicorn(pygame.sprite.Sprite):
-    """Represents the unicorn controlled by the player.
+class Cat(pygame.sprite.Sprite):
+    """Represents the cat controlled by the player.
 
-    The unicorn is the 'hero' of this game.  The player can make it climb
+    The cat is the 'hero' of this game.  The player can make it climb
     (ascend quickly), otherwise it sinks (descends more slowly).  It must
     pass through the space in between pipes (for every pipe passed, one
     point is scored); if it crashes into a pipe, the game ends.
 
     Attributes:
-    x: The unicorn's X coordinate.
-    y: The unicorn's Y coordinate.
+    x: The cat's X coordinate.
+    y: The cat's Y coordinate.
     msec_to_climb: The number of milliseconds left to climb, where a
-        complete climb lasts Unicorn.CLIMB_DURATION milliseconds.
+        complete climb lasts Cat.CLIMB_DURATION milliseconds.
 
     Constants:
-    WIDTH: The width, in pixels, of the unicorn's image.
-    HEIGHT: The height, in pixels, of the unicorn's image.
-    SINK_SPEED: With which speed, in pixels per millisecond, the unicorn
+    WIDTH: The width, in pixels, of the cat's image.
+    HEIGHT: The height, in pixels, of the cat's image.
+    SINK_SPEED: With which speed, in pixels per millisecond, the cat
         descends in one second while not climbing.
-    CLIMB_SPEED: With which speed, in pixels per millisecond, the unicorn
+    CLIMB_SPEED: With which speed, in pixels per millisecond, the cat
         ascends in one second while climbing, on average.  See also the
-        Unicorn.update docstring.
-    CLIMB_DURATION: The number of milliseconds it takes the unicorn to
+        Cat.update docstring.
+    CLIMB_DURATION: The number of milliseconds it takes the cat to
         execute a complete climb.
     """
 
@@ -45,21 +45,21 @@ class Unicorn(pygame.sprite.Sprite):
     CLIMB_DURATION = 333.3
 
     def __init__(self, x, y, msec_to_climb, images):
-        """Initialise a new unicorn instance.
+        """Initialise a new cat instance.
 
         Arguments:
-        x: The unicorn's initial X coordinate.
-        y: The unicorn's initial Y coordinate.
+        x: The cat's initial X coordinate.
+        y: The cat's initial Y coordinate.
         msec_to_climb: The number of milliseconds left to climb, where a
-            complete climb lasts Unicorn.CLIMB_DURATION milliseconds.  Use
-            this if you want the unicorn to make a (small?) climb at the
+            complete climb lasts Cat.CLIMB_DURATION milliseconds.  Use
+            this if you want the cat to make a (small?) climb at the
             very beginning of the game.
-        images: A tuple containing the images used by this unicorn.  It
+        images: A tuple containing the images used by this cat.  It
             must contain the following images, in the following order:
-                0. image of the unicorn with its wing pointing upward
-                1. image of the unicorn with its wing pointing downward
+                0. image of the cat with its wing pointing upward
+                1. image of the cat with its wing pointing downward
         """
-        super(Unicorn, self).__init__()
+        super(Cat, self).__init__()
         self.x, self.y = x, y
         self.msec_to_climb = msec_to_climb
         self._img_wingup, self._img_wingdown = images
@@ -67,14 +67,14 @@ class Unicorn(pygame.sprite.Sprite):
         self._mask_wingdown = pygame.mask.from_surface(self._img_wingdown)
 
     def update(self, delta_frames=1):
-        """Update the unicorn's position.
+        """Update the cat's position.
 
         This function uses the cosine function to achieve a smooth climb:
-        In the first and last few frames, the unicorn climbs very little, in the
+        In the first and last few frames, the cat climbs very little, in the
         middle of the climb, it climbs a lot.
         One complete climb lasts CLIMB_DURATION milliseconds, during which
-        the unicorn ascends with an average speed of CLIMB_SPEED px/ms.
-        This unicorn's msec_to_climb attribute will automatically be
+        the cat ascends with an average speed of CLIMB_SPEED px/ms.
+        This cat's msec_to_climb attribute will automatically be
         decreased accordingly if it was > 0 when this method was called.
 
         Arguments:
@@ -82,21 +82,21 @@ class Unicorn(pygame.sprite.Sprite):
             last called.
         """
         if self.msec_to_climb > 0:
-            frac_climb_done = 1 - self.msec_to_climb/Unicorn.CLIMB_DURATION
-            self.y -= (Unicorn.CLIMB_SPEED * frames_to_msec(delta_frames) *
+            frac_climb_done = 1 - self.msec_to_climb/Cat.CLIMB_DURATION
+            self.y -= (Cat.CLIMB_SPEED * frames_to_msec(delta_frames) *
                        (1 - math.cos(frac_climb_done * math.pi)))
             self.msec_to_climb -= frames_to_msec(delta_frames)
         else:
-            self.y += Unicorn.SINK_SPEED * frames_to_msec(delta_frames)
+            self.y += Cat.SINK_SPEED * frames_to_msec(delta_frames)
 
     @property
     def image(self):
-        """Get a Surface containing this unicorn's image.
+        """Get a Surface containing this cat's image.
 
-        This will decide whether to return an image where the unicorn's
+        This will decide whether to return an image where the cat's
         visible wing is pointing upward or where it is pointing downward
         based on pygame.time.get_ticks().  This will animate the flapping
-        unicorn, even though pygame doesn't support animated GIFs.
+        cat, even though pygame doesn't support animated GIFs.
         """
         if pygame.time.get_ticks() % 500 >= 250:
             return self._img_wingup
@@ -116,15 +116,15 @@ class Unicorn(pygame.sprite.Sprite):
 
     @property
     def rect(self):
-        """Get the unicorn's position, width, and height, as a pygame.Rect."""
-        return Rect(self.x, self.y, Unicorn.WIDTH, Unicorn.HEIGHT)
+        """Get the cat's position, width, and height, as a pygame.Rect."""
+        return Rect(self.x, self.y, Cat.WIDTH, Cat.HEIGHT)
 
 
 class PipePair(pygame.sprite.Sprite):
     """Represents an obstacle.
 
     A PipePair has a top and a bottom pipe, and only between them can
-    the unicorn pass -- if it collides with either part, the game is over.
+    the cat pass -- if it collides with either part, the game is over.
 
     Attributes:
     x: The PipePair's X position.  This is a float, to make movement
@@ -172,7 +172,7 @@ class PipePair(pygame.sprite.Sprite):
         self.image.fill((0, 0, 0, 0))
         total_pipe_body_pieces = int(
             (WIN_HEIGHT -                  # fill window from top to bottom
-             3 * Unicorn.HEIGHT -             # make room for unicorn to fit through
+             3 * Cat.HEIGHT -             # make room for cat to fit through
              3 * PipePair.PIECE_HEIGHT) /  # 2 end pieces + 1 body piece
             PipePair.PIECE_HEIGHT          # to get number of pipe pieces
         )
@@ -229,14 +229,14 @@ class PipePair(pygame.sprite.Sprite):
         """
         self.x -= ANIMATION_SPEED * frames_to_msec(delta_frames)
 
-    def collides_with(self, unicorn):
-        """Get whether the unicorn collides with a pipe in this PipePair.
+    def collides_with(self, cat):
+        """Get whether the cat collides with a pipe in this PipePair.
 
         Arguments:
-        unicorn: The unicorn which should be tested for collision with this
+        cat: The cat which should be tested for collision with this
             PipePair.
         """
-        return pygame.sprite.collide_mask(self, unicorn)
+        return pygame.sprite.collide_mask(self, cat)
 
 
 def load_images():
@@ -244,10 +244,10 @@ def load_images():
 
     The returned dict has the following keys:
     background: The game's background image.
-    unicorn-wingup: An image of the unicorn with its wing pointing upward.
-        Use this and unicorn-wingdown to create a flapping unicorn.
-    unicorn-wingdown: An image of the unicorn with its wing pointing downward.
-        Use this and unicorn-wingup to create a flapping unicorn.
+    cat-wingup: An image of the cat with its wing pointing upward.
+        Use this and cat-wingdown to create a flapping cat.
+    cat-wingdown: An image of the cat with its wing pointing downward.
+        Use this and cat-wingup to create a flapping cat.
     pipe-end: An image of a pipe's end piece (the slightly wider bit).
         Use this and pipe-body to make pipes.
     pipe-body: An image of a slice of a pipe's body.  Use this and
@@ -273,11 +273,11 @@ def load_images():
     return {'background': load_image('background.png'),
             'pipe-end': load_image('pipe_end.png'),
             'pipe-body': load_image('pipe_body.png'),
-            # images for animating the flapping unicorn -- animated GIFs are
+            # images for animating the flapping cat -- animated GIFs are
             # not supported in pygame
             'uni-1-starsup': load_image('cat-up1.png'),
             'uni-1-starsdown': load_image('cat-down1.png')}
-            # need to create a gif of unicorn and replace those pipes to clouds!
+            # need to create a gif of cat and replace those pipes to clouds!
 
 def frames_to_msec(frames, fps=FPS):
     """Convert frames to milliseconds at the specified framerate.
@@ -309,15 +309,15 @@ def main():
     pygame.init()
 
     display_surface = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-    pygame.display.set_caption('Flappy Unicorn')
+    pygame.display.set_caption('Flying Cat')
 
     clock = pygame.time.Clock()
     score_font = pygame.font.SysFont(None, 32, bold=True)  # default font
     images = load_images()
 
-    # the unicorn stays in the same x position, so unicorn.x is a constant
-    # center unicorn on screen
-    unicorn = Unicorn(50, int(WIN_HEIGHT/2 - Unicorn.HEIGHT/2), 2,
+    # the cat stays in the same x position, so cat.x is a constant
+    # center cat on screen
+    cat = Cat(50, int(WIN_HEIGHT/2 - Cat.HEIGHT/2), 2,
                 (images['uni-1-starsup'], images['uni-1-starsdown']))
 
     pipes = deque()
@@ -342,14 +342,14 @@ def main():
                 paused = not paused
             elif e.type == MOUSEBUTTONUP or (e.type == KEYUP and
                     e.key in (K_UP, K_RETURN, K_SPACE)):
-                unicorn.msec_to_climb = Unicorn.CLIMB_DURATION
+                cat.msec_to_climb = Cat.CLIMB_DURATION
 
         if paused:
             continue  # don't draw anything
 
         # check for collisions
-        pipe_collision = any(p.collides_with(unicorn) for p in pipes)
-        if pipe_collision or 0 >= unicorn.y or unicorn.y >= WIN_HEIGHT - Unicorn.HEIGHT:
+        pipe_collision = any(p.collides_with(cat) for p in pipes)
+        if pipe_collision or 0 >= cat.y or cat.y >= WIN_HEIGHT - Cat.HEIGHT:
             done = True
 
         for x in (0, WIN_WIDTH / 2):
@@ -362,12 +362,12 @@ def main():
             p.update()
             display_surface.blit(p.image, p.rect)
 
-        unicorn.update()
-        display_surface.blit(unicorn.image, unicorn.rect)
+        cat.update()
+        display_surface.blit(cat.image, cat.rect)
 
         # update and display score
         for p in pipes:
-            if p.x + PipePair.WIDTH < unicorn.x and not p.score_counted:
+            if p.x + PipePair.WIDTH < cat.x and not p.score_counted:
                 score += 1
                 p.score_counted = True
 
@@ -382,6 +382,6 @@ def main():
 
 
 if __name__ == '__main__':
-    # If this module had been imported, __name__ would be 'flappyunicorn'.
+    # If this module had been imported, __name__ would be 'flyingcat'.
     # It was executed (e.g. by double-clicking the file), so call main.
     main()

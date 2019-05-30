@@ -275,8 +275,8 @@ def load_images():
             'pipe-body': load_image('pipe_body.png'),
             # images for animating the flapping unicorn -- animated GIFs are
             # not supported in pygame
-            'uni-1-starsup': load_image('uni-up.png'),
-            'uni-1-starsdown': load_image('uni-down.png')}
+            'uni-1-starsup': load_image('cat-up1.png'),
+            'uni-1-starsdown': load_image('cat-down1.png')}
             # need to create a gif of unicorn and replace those pipes to clouds!
 
 def frames_to_msec(frames, fps=FPS):
